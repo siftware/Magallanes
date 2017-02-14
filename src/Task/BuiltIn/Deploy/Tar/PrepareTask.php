@@ -40,9 +40,10 @@ class PrepareTask extends AbstractTask
         $tarLocal = $this->runtime->getTempFile();
         $this->runtime->setVar('tar_local', $tarLocal);
 
+        $includes = $this->getIncludes();
         $excludes = $this->getExcludes();
         $flags = $this->runtime->getEnvOption('tar_create', 'cfzp');
-        $cmdTar = sprintf('tar %s %s %s ./', $flags, $tarLocal, $excludes);
+        $cmdTar = sprintf('tar %s %s %s %s', $flags, $tarLocal, $excludes, $includes);
 
         /** @var Process $process */
         $process = $this->runtime->runLocalCommand($cmdTar, 300);
@@ -59,5 +60,12 @@ class PrepareTask extends AbstractTask
         }
 
         return implode(' ', $excludes);
+    }
+
+    protected function getIncludes()
+    {
+        $includes = $this->runtime->getEnvOption('include', ['./']);
+
+        return implode(' ', $includes);
     }
 }
